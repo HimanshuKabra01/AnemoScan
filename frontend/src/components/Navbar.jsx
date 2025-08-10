@@ -73,14 +73,14 @@ export default function Navbar() {
           aria-label="Toggle theme"
           className="bg-red-200 rounded-full border border-red-700 p-2"
         >
-          {theme === "dark" ? <Moon className="w-5 h-5 text-red-800" /> : <Sun className="w-5 h-5 text-red-800" />}
+          {theme === "dark" ? <Sun className="w-5 h-5 text-red-800" /> : <Moon className="w-5 h-5 text-red-800" />}
         </button>
 
         {/* Login/Logout Button */}
         <button
-          className="bg-red-400 py-2"
+          className="bg-red-400 py-2 rounded-full cursor-pointer"
         >
-          <span className="relative z-10 text-white tracking-wide px-3 py-2">
+          <span className="relative z-10 text-white font-medium tracking-wide px-3 py-2">
             {isLoggedIn ? "Logout" : "Login"}
             <span className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-red-700" />
             <span className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-red-700" />
