@@ -5,16 +5,90 @@ import { useTheme } from "../context/ThemeProvider";
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
 
+  // TODO: Replace with actual auth logic from your context/state
+  const isLoggedIn = false;
+
+  const loggedOutLinks = [
+    { name: "Home", href: "/" },
+    { name: "How It Works", href: "/how-it-works" },
+    { name: "About Us", href: "/about" },
+  ];
+
+  const loggedInLinks = [
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "AI Symptom Checker", href: "/symptom-checker" },
+    { name: "Seasonal Prediction", href: "/seasonal-prediction" },
+    { name: "Blood Donation", href: "/blood-donation" },
+    { name: "About Us", href: "/about" },
+  ];
+
+  const navLinks = isLoggedIn ? loggedInLinks : loggedOutLinks;
   return (
-    <nav className="flex justify-between p-4 bg-gray-200 dark:bg-gray-800 transition-colors duration-300">
-      <h1 className="text-lg font-bold dark:text-white">AnemoScan</h1>
-      <button
-        onClick={toggleTheme}
-        className="flex items-center gap-2 px-3 py-2 rounded bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
-        aria-label="Toggle theme"
-      >
-        {theme === "dark" ? <Moon size={18} /> : <Sun size={18} />}
-      </button>
+    <nav className="relative flex justify-between items-center px-8 py-4
+    bg-gradient-to-r from-red-50/95 via-rose-50/95 to-red-50/95 font-primary
+    dark:from-gray-900/95 dark:via-red-950/95 dark:to-gray-900/95
+    backdrop-blur-xl shadow-lg sticky top-0 z-50 
+    transition-all duration-500 border-b border-red-200/30 dark:border-red-800/30">
+      {/* Animated background accent */}
+      <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 via-rose-500/5 to-red-600/5 
+         dark:from-red-400/5 dark:via-rose-400/5 dark:to-red-500/5 
+         animate-pulse opacity-70" />
+      
+      {/* Logo */}
+      <div className="relative z-10">
+        <h1 className="text-3xl font-bold font-heading">
+          AnemoScan
+        </h1>
+      </div>
+
+      {/* Navigation Links */}
+      <ul className="relative z-10 flex items-center gap-8">
+        {navLinks.map((link) => {
+          const isActive = window.location.pathname === link.href; // replace with router logic
+          return (
+            <li key={link.name} className="relative">
+              <a
+                href={link.href}
+                className={`group relative px-3 py-1 font-medium overflow-hidden 
+                  ${isActive ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
+              >
+                {/* Text */}
+                <span className="relative z-10">{link.name}</span>
+                <span
+                  className={`absolute left-0 bottom-0 w-full bg-red-600 rounded-md transition-all duration-500 ease-in-out
+                    ${isActive ? "h-full" : "h-0 group-hover:h-full"}`}
+                  style={{ zIndex: 0 }}
+                />
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Right-side buttons */}
+      <div className="relative z-10 flex items-center gap-5">
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          aria-label="Toggle theme"
+          className="bg-red-200 rounded-full border border-red-700 p-2"
+        >
+          {theme === "dark" ? <Moon className="w-5 h-5 text-red-800" /> : <Sun className="w-5 h-5 text-red-800" />}
+        </button>
+
+        {/* Login/Logout Button */}
+        <button
+          className="bg-red-400 py-2"
+        >
+          <span className="relative z-10 text-white tracking-wide px-3 py-2">
+            {isLoggedIn ? "Logout" : "Login"}
+            <span className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-red-700" />
+            <span className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-red-700" />
+            <span className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-red-700" />
+            <span className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-red-700" />
+          </span>
+        </button>
+      </div>
     </nav>
   );
 }
