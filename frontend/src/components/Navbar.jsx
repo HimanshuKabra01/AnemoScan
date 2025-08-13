@@ -1,12 +1,32 @@
-import React from "react";
+import React, { useState, useEffect} from "react";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "../context/ThemeProvider";
+import { auth, db } from '../firebase';
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc } from 'firebase/firestore'; 
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState("");
 
-  // TODO: Replace with actual auth logic from your context/state
-  const isLoggedIn = false;
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if(currentUser) {
+        setUser(currentUser);
+
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if(userDoc.exists()) {
+          setUsername(userDoc.data().name || "User"); 
+        }
+      } else {
+        setUser(null);
+        setUsername("");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const loggedOutLinks = [
     { name: "Home", href: "/" },
@@ -22,29 +42,27 @@ export default function Navbar() {
     { name: "About Us", href: "/about" },
   ];
 
-  const navLinks = isLoggedIn ? loggedInLinks : loggedOutLinks;
+  const navLinks = user ? loggedInLinks : loggedOutLinks;
   return (
     <nav className="relative flex justify-between items-center px-8 py-4
     bg-gradient-to-r from-red-50/95 via-rose-50/95 to-red-50/95 font-primary
     dark:from-gray-900/95 dark:via-red-950/95 dark:to-gray-900/95
     backdrop-blur-xl shadow-lg sticky top-0 z-50 
     transition-all duration-500 border-b border-red-200/30 dark:border-red-800/30">
-      {/* Animated background accent */}
+      {/* Background animation */}
       <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 via-rose-500/5 to-red-600/5 
          dark:from-red-400/5 dark:via-rose-400/5 dark:to-red-500/5 
          animate-pulse opacity-70" />
-      
+
       {/* Logo */}
       <div className="relative z-10">
-        <h1 className="text-3xl font-bold font-heading">
-          AnemoScan
-        </h1>
+        <h1 className="text-3xl font-bold font-heading">AnemoScan</h1>
       </div>
 
       {/* Navigation Links */}
       <ul className="relative z-10 flex items-center gap-8">
         {navLinks.map((link) => {
-          const isActive = window.location.pathname === link.href; // replace with router logic
+          const isActive = window.location.pathname === link.href;
           return (
             <li key={link.name} className="relative">
               <a
@@ -52,7 +70,6 @@ export default function Navbar() {
                 className={`group relative px-3 py-1 font-medium overflow-hidden 
                   ${isActive ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
               >
-                {/* Text */}
                 <span className="relative z-10">{link.name}</span>
                 <span
                   className={`absolute left-0 bottom-0 w-full bg-red-600 rounded-md transition-all duration-500 ease-in-out
@@ -65,7 +82,7 @@ export default function Navbar() {
         })}
       </ul>
 
-      {/* Right-side buttons */}
+      {/* Right side buttons */}
       <div className="relative z-10 flex items-center gap-5">
         {/* Theme Toggle */}
         <button
@@ -76,18 +93,27 @@ export default function Navbar() {
           {theme === "dark" ? <Sun className="w-5 h-5 text-red-800" /> : <Moon className="w-5 h-5 text-red-800" />}
         </button>
 
-        {/* Login/Logout Button */}
-        <button
-          className="bg-red-400 py-2 rounded-full cursor-pointer"
-        >
-          <span className="relative z-10 text-white font-medium tracking-wide px-3 py-2">
-            {isLoggedIn ? "Logout" : "Login"}
-            <span className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-red-700" />
-            <span className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-red-700" />
-            <span className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-red-700" />
-            <span className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-red-700" />
-          </span>
-        </button>
+        {/* Login / Logout */}
+        {user ? (
+          <div className="flex items-center gap-3">
+            <span className="text-gray-700 dark:text-gray-200 font-medium">
+              {username}
+            </span>
+            <button
+              onClick={() => signOut(auth)}
+              className="bg-red-400 py-2 rounded-full cursor-pointer px-3 text-white font-medium tracking-wide"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <a
+            href="/login"
+            className="bg-red-400 py-2 rounded-full cursor-pointer px-3 text-white font-medium tracking-wide"
+          >
+            Login
+          </a>
+        )}
       </div>
     </nav>
   );
