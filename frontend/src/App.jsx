@@ -21,12 +21,15 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen transition-colors duration-300">
-        <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={
+            <>
+              <Navbar />
+              <Home />
+            </>} />
           <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
           <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/dashboard" />} />
-          <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route path="/dashboard" element={user ? <> <Navbar /> <Dashboard /> </> : <Navigate to="/login" />} />
         </Routes>
       </div>
     </Router>
