@@ -4,6 +4,7 @@ import { useTheme } from "../context/ThemeProvider";
 import { auth, db } from '../firebase';
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from 'firebase/firestore'; 
+import { Link } from 'react-router-dom';
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -35,7 +36,6 @@ export default function Navbar() {
   ];
 
   const loggedInLinks = [
-    { name: "Dashboard", href: "/dashboard" },
     { name: "AI Symptom Checker", href: "/symptom-checker" },
     { name: "Seasonal Prediction", href: "/seasonal-prediction" },
     { name: "Blood Donation", href: "/blood-donation" },
@@ -56,7 +56,10 @@ export default function Navbar() {
 
       {/* Logo */}
       <div className="relative z-10">
-        <h1 className="text-3xl font-bold font-heading">AnemoScan</h1>
+        <Link to="/">
+          <h1 className="text-3xl font-bold font-heading">AnemoScan</h1>
+        </Link>
+        
       </div>
 
       {/* Navigation Links */}
@@ -96,9 +99,11 @@ export default function Navbar() {
         {/* Login / Logout */}
         {user ? (
           <div className="flex items-center gap-3">
-            <span className="text-gray-700 dark:text-gray-200 font-medium">
-              {username}
-            </span>
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-purple-600 flex items-center justify-center text-white text-2xl">
+              <Link to="/dashboard">
+                {username?.charAt(0).toUpperCase() || "U"}
+              </Link>
+            </div>
             <button
               onClick={() => signOut(auth)}
               className="bg-red-400 py-2 rounded-full cursor-pointer px-3 text-white font-medium tracking-wide"

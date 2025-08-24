@@ -15,11 +15,6 @@ function Home() {
 
         {/* Content */}
         <div className="flex flex-col max-w-4xl mx-auto text-center items-center justify-center relative z-10">
-          <div className="mb-6 flex space-x-2 border items-center justify-center px-4 py-1 rounded-full bg-red-400/10 text-rose-600 dark:text-rose-300 font-medium">
-            <HeartPulse className="h-4 w-4" />
-            <span>AI Health & Blood Donation</span>
-          </div>
-
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white mb-6 leading-tight">
             Smarter Health Checks,{" "}
             <span className="bg-gradient-to-r from-rose-500 via-emerald-500 to-rose-500 bg-clip-text text-transparent">
